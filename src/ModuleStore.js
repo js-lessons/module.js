@@ -10,13 +10,13 @@ function ModuleStore() {
   arguments.callee._singletonInstance = this;
 }
 
-ModuleStore.prototype.addModule = function(name, moduleFunction) {
+ModuleStore.prototype.addModule = function(name, moduleInstance) {
 }
 
 ModuleStore.prototype.getModule = function(name) {
 }
 
-ModuleStore.prototype.reset = function(name, moduleStore) {
+ModuleStore.prototype.reset = function() {
 }
 
 ModuleStore.prototype.contains = function(name) {
