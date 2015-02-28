@@ -2,11 +2,11 @@
 var ModuleStore = require('./ModuleStore')();
 
 function Module(name, deps, moduleFunction) {
+
     this.name = name;
     if(typeof(deps) === 'object'){
-        this.deps = deps;
-        if(this.deps.length !== 0){
-            this._depend[this.name] = this.deps;
+        if(deps.length !== 0){
+            this.deps = deps;
         }
     }else{
         this.moduleFunction = deps;
@@ -15,36 +15,40 @@ function Module(name, deps, moduleFunction) {
     if(typeof(moduleFunction) === 'function'){
         this.moduleFunction = moduleFunction;
     }
-    if(this.moduleFunction !== undefined){
-        ModuleStore.addModule(this.name, this.moduleFunction);
-    }
 }
 
 Module.prototype.init = function() {
+
     var that = this;
     var depenObject = {};
-    var depends = this._depend[this.name];
+    var depends = this.deps;
     if(depends){
         depends.forEach(function(elem){
             if (elem in that._cache){
                 depenObject[elem] = that._cache[elem];
             }else{
-                depenObject[elem] = ModuleStore.getModule(elem)();
+                depenObject[elem] = ModuleStore.getModule(elem).init();
                 that._cache[elem] = depenObject[elem];
             }
         });
     }
-    var moduleFunction = ModuleStore.getModule(this.name);
-    if(moduleFunction){
-        moduleFunction.call(depenObject, depenObject);
+
+    if(this.moduleFunction){
+        return this.moduleFunction.call(depenObject, depenObject);
     }
 };
 
 Module.prototype._cache = {};
-Module.prototype._depend = {};
 
 function m(name, deps, moduleFunction) {
-    return new Module(name, deps, moduleFunction);
+    if(deps || moduleFunction){
+        var instance = new Module(name, deps, moduleFunction);
+        ModuleStore.addModule(name, instance);
+        return instance;
+    }else{
+        return ModuleStore.getModule(name);
+    }
+
 }
 
 
@@ -53,7 +57,6 @@ m.__reset__ = function() {
   //  or                             // only for testing purposes
   ModuleStore.reset();              // depends on your implementation
   Module.prototype._cache = {};
-  Module.prototype._depend = {};
 }
 
 module.exports = m;

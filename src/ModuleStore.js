@@ -9,7 +9,7 @@ function ModuleStore() {
 
     arguments.callee._singletonInstance = this;
     this.store = {};
-//format - nameModule:{func:}
+//format - nameModule:instance;
 }
 
 ModuleStore.prototype.addModule = function(name, moduleFunction) {
