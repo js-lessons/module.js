@@ -94,6 +94,16 @@ describe('module', function() {
     it('caches module function invocations', function() {
       m('square', test.moduleFunction);
 
+      m('square').init();
+      m('square').init();
+
+      expect(test.moduleFunction).to.have.been.calledOnce;
+    });
+
+
+    it('caches dependencies module function invocations', function() {
+      m('square', test.moduleFunction);
+
       m('module1', ['square']).init();
       m('module2', ['square']).init();
 
