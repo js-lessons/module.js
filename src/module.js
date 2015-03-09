@@ -1,8 +1,7 @@
-//use ModuleStore if you want
 var ModuleStore = require('./ModuleStore')();
 
 function Module(name, deps, moduleFunction) {
-    this.isLoaded = false;
+
     this.name = name;
     if(typeof(deps) === 'object'){
         if(deps.length !== 0){
@@ -18,22 +17,23 @@ function Module(name, deps, moduleFunction) {
 }
 
 Module.prototype.init = function() {
+
     var that = this;
     var depenObject = {};
     var depends = this.deps;
     if(depends){
         depends.forEach(function(elem){
-            var inst = ModuleStore.getModule(elem);
-            inst.init();
-            depenObject[elem] = that._cache[elem];
+            if (elem in that._cache){
+                depenObject[elem] = that._cache[elem];
+            }else{
+                depenObject[elem] = ModuleStore.getModule(elem).init();
+                that._cache[elem] = depenObject[elem];
+            }
         });
     }
-    if(this.isLoaded){
-        return;
-    }
+
     if(this.moduleFunction){
-        this._cache[this.name] = this.moduleFunction.call(depenObject,depenObject);
-        this.isLoaded = true;
+        return this.moduleFunction.call(depenObject, depenObject);
     }
 };
 
