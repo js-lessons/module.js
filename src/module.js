@@ -23,8 +23,8 @@ Module.prototype.init = function() {
     var depends = this.deps;
     if(depends){
         depends.forEach(function(elem){
-            var inst = ModuleStore.getModule(elem);
-            inst.init();
+            ModuleStore.getModule(elem).init();
+//            inst.init();
             depenObject[elem] = that._cache[elem];
         });
     }
