@@ -13,7 +13,6 @@ describe('module', function() {
     test.moduleFunction = function() {
       return function(x) { return x*x }
     }
-
     sinon.spy(test, 'moduleFunction');
   });
 
@@ -63,7 +62,6 @@ describe('module', function() {
 
       expect(test.moduleFunction.calledBefore(appModuleFunction)).to.be.true;
     });
-
 
     it('evaluates module function with deps results', function() {
       var appModuleFunction = sinon.spy();
