@@ -24,7 +24,7 @@ ModuleStore.prototype.reset = function() {
     cacheModules = {};
 };
 
-ModuleStore.prototype.contains = function(name) {//есть ли такой модуль в хранилище?(true/false)
+ModuleStore.prototype.contains = function(name) {
     return name in cacheModules;
 };
 module.exports = ModuleStore;
