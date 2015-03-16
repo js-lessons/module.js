@@ -1,19 +1,57 @@
-// use ModuleStore if you want
-// var ModuleStore = require('./ModuleStore')();
+var ModuleStore = require('./ModuleStore')();
 
-function Module(name, deps, moduleFunction) { }
+function Module(name, deps, moduleFunction) {
+    if (typeof (deps) === 'function') {
+        moduleFunction = deps;
+        deps = [];
+    }
 
-Module.prototype.init = function() { };
+    this.deps = deps;
+    this.name = name;
+    this.moduleFunction = moduleFunction;
 
+    this.isLoaded = false;
+}
+
+Module.prototype.cache = {};
+
+Module.prototype.init = function() {
+    var self = this;
+    var getDeps = {};
+
+    var depsModule = ModuleStore.getModule(this.name)['deps'];//получить массив зависимостей
+
+    depsModule.forEach(function(elem) {
+        getDeps = ModuleStore.getModule(elem);
+        getDeps.init();
+        getDeps[elem] = self.cache[elem];
+
+    });
+
+    if (this.isLoaded) {
+        return;
+    }
+
+    this.isLoaded = true;
+
+    if (this.moduleFunction) {
+        this.cache[this.name] = this.moduleFunction.call(getDeps, getDeps);
+    }
+
+};
 
 function m(name, deps, moduleFunction) {
+
+    if (!ModuleStore.contains(name)) {
+        ModuleStore.addModule(name, new Module(name, deps, moduleFunction));
+    }
+
+    return ModuleStore.getModule(name);
 }
 
-m.__reset__ = function() {
-  // _modules = {}                   // resets module state
-  //  or                             // only for testing purposes
-  // ModuleStore.reset();            // depends on your implementation
-}
+m.__reset__ = function() {        // resets module state
+    ModuleStore.reset();            // only for testing purposes
+};
 
 
 module.exports = m;
