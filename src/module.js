@@ -49,8 +49,8 @@ function m(name, deps, moduleFunction) {
     return ModuleStore.getModule(name);
 }
 
-m.__reset__ = function() {        // resets module state
-    ModuleStore.reset();            // only for testing purposes
+m.__reset__ = function() {       
+    ModuleStore.reset();           
 };
 
 
